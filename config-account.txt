@@ -1,0 +1,10 @@
+#The dev and prod accounts were linked to the pingnoran master account via AWS Organisations.
+#Those accounts do not have credentials, instead those accounts are called via the master account credentials.
+
+[profile PROD]
+role_arn = arn:aws:iam::REPLACEME_PROD:role/OrganizationAccountAccessRole
+source_profile = pingoran
+
+[profile DEV]
+role_arn = arn:aws:iam::REPLACEME_DEV:role/OrganizationAccountAccessRole
+source_profile = pingnoran

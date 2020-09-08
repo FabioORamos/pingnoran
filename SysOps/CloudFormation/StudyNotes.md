@@ -62,3 +62,9 @@ StackSets
 -	Trusted accounts to create, update, delete stack instances from StackSets
 -	When you update a stack set, all associated stack instances are updated throughout all accounts and regions 
 
+
+## Functions
+
+### Fn::Base64
+* Pass user data to the EC2 instance
+* User data script log is in **/var/log/cloud-init-output.log** 

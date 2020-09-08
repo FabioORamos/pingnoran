@@ -43,7 +43,7 @@ Resources:
               mode: '000644'
           commands:
             hello:
-              command: "echo 'hello world'"
+              command: "echo 'hello Pingnorians!'"
           services:
             sysvinit:
               httpd:

@@ -21,46 +21,49 @@
     * !FindInMap [Map Name, TopLevelKey, SecondLevelKey]
 
 ## Outputs
--	Declares optional outputs values that we can import into other stacks
-o	Needs to export them first
--	Best way to perform collaboration cross stack
--	Can’t delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation 
+* Declares optional outputs values that we can import into other stacks
+    * Needs to export them first
+* Best way to perform collaboration cross stack
+* Can’t delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation 
 
 ## Stack
--	Cross Stack Reference
-o	Create a second template that leverages the security group
-o	Use Fn::ImportValue function
+* Cross Stack Reference
+    * Create a second template that leverages the security group
+    * Use Fn::ImportValue function
 
 ## Conditions
--	Used to control the creation of resources or outputs based on a condition
--	Common conditions:
-o	Environment (dev/test/prod)
-o	AWS Region
-o	Any parameter value
--	Each condition can reference another condition, parameter value or mapping
--	Intrinsic function (logical) can be any of the following:
-o	Fn::And	Fn::Equals 	Fn::If		Fn::Not	Fn::Or
-
-## ChangeSets
--	You get a prompt informing you of the changes that will occur on your updated stack
--	It won’t say if the update will be successful
+* Used to control the creation of resources or outputs based on a condition
+* Common conditions:
+    * Environment (dev/test/prod)
+    * AWS Region
+    * Any parameter value
+* Each condition can reference another condition, parameter value or mapping
+* Intrinsic function (logical) can be any of the following:
+    * Fn::And	
+    * Fn::Equals 	
+    * Fn::If		
+    * Fn::Not	
+    * Fn::Or
 
 ## NestedStack
--	Stacks that are part of other stacks
--	Allow you to isolate repeated patterns/common components in separate stacks and call them from other stacks
--	Considered best practices
--	To update a nested stack, always update the parent (root stack)
+* Stacks that are part of other stacks
+* Allow you to isolate repeated patterns/common components in separate stacks and call them from other stacks
+* Considered best practices
+* To update a nested stack, always update the parent (root stack)
 
-CrossStack
--	Helpful when stacks have different life cycles
--	When you need to pass export values to many stacks 
+## CrossStack
+* Helpful when stacks have different life cycles
+* When you need to pass export values to many stacks 
 
+## ChangeSets
+* You get a prompt informing you of the changes that will occur on your updated stack
+* It won’t say if the update will be successful
 
-StackSets
--	Create, update or delete stacks across multiple accounts and regions with a single operation
--	Administrator account to create StackSets
--	Trusted accounts to create, update, delete stack instances from StackSets
--	When you update a stack set, all associated stack instances are updated throughout all accounts and regions 
+## StackSets
+* Create, update or delete stacks across multiple accounts and regions with a single operation
+* Administrator account to create StackSets
+* Trusted accounts to create, update, delete stack instances from StackSets
+* When you update a stack set, all associated stack instances are updated throughout all accounts and regions 
 
 
 ## Functions
@@ -81,3 +84,14 @@ StackSets
 * Need to define **WaitCondition**
     * Template is blocked unitl a signal is received
     * Attach a **CreationPolicy**
+
+## Retaining Data on Deletes
+* By default all resources created by CloudFormation are deleted, when you delete the CloudFormation Stack
+* To retain resources you can:
+    * **DeletionPolicy=Retain**
+        * On the resources specify which items to preserve/backup
+        * To keep a resource, specify **Retain**
+    * **DeletionPolicy=Snapshot**
+        * Creates a snapshot of your resources before deleting it
+        EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
+        * RDS DBInstance, RDS DBCluster, Redshift Cluster

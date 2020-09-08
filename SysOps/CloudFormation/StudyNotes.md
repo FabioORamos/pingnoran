@@ -68,3 +68,16 @@ StackSets
 ### Fn::Base64
 * Pass user data to the EC2 instance
 * User data script log is in **/var/log/cloud-init-output.log** 
+* Basic bash script
+
+### Fn::cnf-init
+* AWS::CloudFormation::Init must be in the Metadata of a resource
+* Helps make complex EC2 configurations readable
+* Logs go to **/var/log/cfn-init.log**
+
+### Fn::cnf-signal
+* This commands signal CloudFormation to act based on the results of cnf-init
+* Tells CloudFormation what to do after success/fail and how long it should wait for an answer
+* Need to define **WaitCondition**
+    * Template is blocked unitl a signal is received
+    * Attach a **CreationPolicy**

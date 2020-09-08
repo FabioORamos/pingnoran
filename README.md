@@ -7,4 +7,4 @@ This git repository will also contain the code for pingnoran.com.
 Things to do:
 Link resources to Route 53
 
-Another add
+Feel free to use any of those resources! :octocat:

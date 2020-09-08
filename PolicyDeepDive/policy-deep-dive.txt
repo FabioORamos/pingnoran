@@ -1,0 +1,8 @@
+[] - list of objects in JSON
+{} -
+
+Statement []
+Effect = either Deny or Allow
+    An explicit Deny trumps any Allow
+
+/* = at the end means all objects and path are included in the policy

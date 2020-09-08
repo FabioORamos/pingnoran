@@ -1,11 +1,11 @@
-##CloudFormation
+## CloudFormation
 
-#Resources
+# Resources
 * Core of the CloudFormation template (Mandatory)
 * Represent the different AWS components that will be created and configured
     * Form: AWS::aws-product-name::data-type-name
 
-#Parameters
+# Parameters
 -	Provide inputs to your AWS CloudFormation
 -	Important if you want to reuse templates across the company
 -	Fn::Ref function can be leveraged to reference parameters
@@ -13,7 +13,7 @@
 -	Shorthand for this in YAML is !Ref
 o	!Ref can also reference resources
 
-#Mappings
+# Mappings
 -	Fixed variables within your CloudFormation template
 -	Values are hardcoded within the template
 -	Used to differentiate between different environments (prod vs dev), regions (AWS Regions), AMI types…

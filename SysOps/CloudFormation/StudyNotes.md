@@ -95,3 +95,10 @@
         * Creates a snapshot of your resources before deleting it
         EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
         * RDS DBInstance, RDS DBCluster, Redshift Cluster
+
+## Update Policies
+* To update auto scaling activities, you can use the **UpdatePolicy** attribute
+* Use the AWS::AutoScaling::AutoScalingGroups resources
+    * AutoScalingReplacingUpdate = Immutable update
+    * AutoScalingRollingUpdate
+    * AutoScalingScheduledAction

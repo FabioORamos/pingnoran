@@ -46,3 +46,26 @@
 * Define template (rules package, duration, attibutes, SNS Topics)
 * No own custom rules possible, only AWS managed rules
 * You get a report after the analysis
+
+## Logs
+* Service Logs include:
+    * CloudTrail trails: trace all API calls
+    * Config Rules: for config & compliance over time
+    * CloudWatch Logs: for full data retention
+    * VPC Flow Logs: IP traffic within your VPC
+    * ELB Access Logs: metadata of requests made to your balancers
+    * CloudFront Logs: web distribution access logs
+    * WAF Logs: full logging of all requests analysed by the service
+* Logs can be analysed using AWS Athena, if logs stored in S3
+* Logs should be encrypted in S3 and control access using IAM and Bucket Policies, MFA
+
+## Trusted Advisor
+* High level AWS account assessment
+* Analyse your AWS accounts and provides recommendation:
+    * Cost Optimisation
+    * Performance
+    * Security
+    * Fault Tolerance
+    * Service Limits
+* Core checks and recommendations: all customers
+* Need to be a Business and have a support plan to have access to a Full Trusted Advisor

@@ -44,3 +44,18 @@
 * Non-default
     * Inbound = Nothing is allowed
     * Outbound = ALL traffic is allowed
+
+
+## Advanced Networking
+
+ENI (Elastic Network Interface) is the virtual component of the NIC (Network Interface Controller) level
+
+The primary ENI cannot be removed from the EC2.
+Secondary ENI can be moved (detached and attached) between instances but subnets need to be in the same AZ.
+* Multiple ENIs offers multiple security zones or traffic types.
+* Each ENI can have a different Security Group.
+* Each ENI can also be protected by a NACL around its subnet.
+
+A primary private IPv4 address is allocated to the ENI and will remain static for the duration of the EC2 instance
+
+## Bootstrapping vs AMI Baking

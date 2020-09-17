@@ -75,7 +75,7 @@ Different AWS accounts
 ### S3 Replication options
 
 * Cross-Region Replication (CRR) vs Same-Region Replication (SRR)
-* Al objects or a subset
+* All objects or a subset
 * Storage class: default is to maintain
 * Ownership: default is the source account
 * Replication Time Control (RTC) if you need to meet compliance of having objects replicated within 15 mins

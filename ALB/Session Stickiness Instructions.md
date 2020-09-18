@@ -15,20 +15,14 @@ There are a number of key steps in the demo:-
 - Disable stickiness and confirm your connections are distributed again
 - Cleanup
 
-# STAGE 1A - Login to an AWS Account    
-Login to an AWS account and select the `N. Virginia // us-east-1 region`    
-
-# STAGE 1B - APPLY CloudFormation (CFN) Stack  
+# Run the CloudFormation (CFN) Stack: ALB-Stickness.yaml file  
 Applying the cloudformation template will create the DEMO VPC, 3 Public Subnets, an ASG and LT which will bootstrap some simple web servers and an application load balancer which runs in each AZ and has **NO STICKINESS*  
-
-Click https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://learn-cantrill-labs.s3.amazonaws.com/aws-simple-demos/aws-alb-session-stickiness/ALBSTICKINESS.yaml&stackName=ALB  
 
 Check the box for `capabilities: [AWS::IAM::Role]`
 Click `Create Stack`
-
 The stack will take 5-10 minutes to apply and will need to be in a `CREATE_COMPLETE` state before you can continue.  
 
-# STAGE 1C - Verify the webserver is running on each instance
+# Verify the webserver is running on each instance
 Move to the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home:  
 Click `Instances`  
 Select each instance inturn  
@@ -38,7 +32,7 @@ Do this for all 6 running instances
 **each instance should show a webpage, with a random coloured background, an instance ID and a random cat picture**  
 
 
-# STAGE 1D - Access the load balancer using the `DNS Name`
+# Access the load balancer using the `DNS Name`
 Move to the load balancer area of the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LoadBalancers:  
 Select the `ALB-ALB-RANDOM` load balancer   
 On the `Description` tab below, copy the `DNS name` in your clipboard and open it in a new tab  
@@ -49,7 +43,7 @@ Don't worry if it shows 3, thats enough to continue with the next demo steps
 
 **session stickiness is NOT enabled so sessions are being distributed across all targets in the ALB target group**   
 
-# STAGE 1E - Enable session stickiness
+# Enable session stickiness
 
 From the load balancer Target Group area of the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#TargetGroups:  
 Click the `ALB-ALBTG-RANDOM` load balancer target group   

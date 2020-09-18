@@ -16,6 +16,8 @@ The demo consists of 7 stages, each implementing additional components of the ar
 
 ![Architecture](https://github.com/acantril/learn-cantrill-io-labs/raw/master/aws-elastic-wordpress-evolution/ArchitectureEvolutionAll.png)
 
+Test
+
 ## Instructions
 
 - [Stage1](https://github.com/acantril/learn-cantrill-io-labs/blob/master/aws-elastic-wordpress-evolution/02_LABINSTRUCTIONS/STAGE1%20-%20Setup%20and%20Manual%20wordpress%20build.md)

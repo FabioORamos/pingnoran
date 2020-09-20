@@ -1,14 +1,12 @@
 # Advanced Demo - Web App - Single Server to Elastic Evolution
 
-![Stage2 - PNG](https://github.com/acantril/learn-cantrill-io-labs/blob/master/aws-elastic-wordpress-evolution/02_LABINSTRUCTIONS/STAGE2%20-%20SINGLE%20SERVER%20LT.png)
-
 In stage 2 of this advanced demo lesson you are going to create a launch template which can automate the build of WordPress.  
 The architecture will still use the single instance for both the WordPress application and database, the only change will be an automatic build rather than manual.  
 Any level of automation/self-healing or scaling architecture will need a bootstrapped or AMI-baked build to function effectively.
 
-# STAGE 2A - Create the Launch Template
+## Create the Launch Template
 
-Open the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name  
+Open the EC2 console  
 Click `Launch Templates` under `Instances` on the left menu  
 Click `Create Launch Template`  
 Under `Launch Template Name` enter `Wordpress`  
@@ -19,12 +17,12 @@ Under `Amazon machine image (AMI) - required` click and locate `Amazon Linux 2 A
 Under `Instance Type` select `t2.micro` (or whichever is listed as free tier eligable)  
 Under `Key pair (login)` select `Don't include in launch template`  
 Under `networking Settings` make sure `Virtual Private Cloud (VPC)` is selected
-Under `Security Groups` select `A4LVPC-SGWordpress`  
+Under `Security Groups` select `VPC-SGWordpress`  
 Expand `Advanced Details`
-Under `IAM instance profile` select `A4LVPC-WordpressInstanceProfile`  
+Under `IAM instance profile` select `VPC-WordpressInstanceProfile`  
 Under `T2/T3 Unlimited` select `Enable`  
 
-# STAGE 2B - Add Userdata
+## Add Userdata
 
 At this point we need to add the configuration which will build the instance
 Enter the user data below into the `User Data` box
@@ -32,19 +30,19 @@ Enter the user data below into the `User Data` box
 ```
 #!/bin/bash -xe
 
-DBPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
+DBPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
 DBPassword=`echo $DBPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBRootPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
+DBRootPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
 DBRootPassword=`echo $DBRootPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBUser=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBUser --query Parameters[0].Value)
+DBUser=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBUser --query Parameters[0].Value)
 DBUser=`echo $DBUser | sed -e 's/^"//' -e 's/"$//'`
 
-DBName=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBName --query Parameters[0].Value)
+DBName=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBName --query Parameters[0].Value)
 DBName=`echo $DBName | sed -e 's/^"//' -e 's/"$//'`
 
-DBEndpoint=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBEndpoint --query Parameters[0].Value)
+DBEndpoint=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBEndpoint --query Parameters[0].Value)
 DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
 
 yum -y update
@@ -96,7 +94,7 @@ Click `Create Launch Template`
 Click `View Launch Templates`
 
 
-# STAGE 2C - Launch an instance using it
+## Launch an instance using it
 
 Select the launch template in the list ... it should be called `Wordpress`  
 Click `Actions` and `Launch instance from template`
@@ -106,7 +104,7 @@ Set `Key` to `Name` and `Value` to `Wordpress-LT`
 Scroll to the bottom and click `Launch Instance from template`  
 Click the instance id in the `Success` box
 
-# STAGE 2D - Test
+## Test
 
 Open the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name  
 Select the `Wordpress-LT` instance  
@@ -114,7 +112,7 @@ copy the `IPv4 Public IP` into your clipboard
 Open that IP in a new tab  
 You should see the WordPress welcome page  
 
-## Perform Initial COnfiguration and make a post
+### Perform Initial Configuration and make a post
 
 in `Site Title` enter `Catagram`  
 in `Username` enter `admin`
@@ -145,7 +143,7 @@ Click `view Post`
 This is your working, auto built WordPress instance
 ** don't terminate the instance this time - we're going to migrate the database in stage 3**
 
-# STAGE 2 - FINISH  
+# FINISH  
 
 This configuration has several limitations :-
 

@@ -19,9 +19,9 @@ ensure `64-bit (x86)` is selected
 Click `Select`
 Select whatever instance shows as `Free tier eligible`  
 Click `Next: Configure Instance Details`  
-For `Network` select `A4LVPC`  
+For `Network` select `Pingnoran`  
 for `Subnet` select `sn-Pub-A`  
-For `IAM role` select `A4LVPC-WordpressInstanceProfile`  
+For `IAM role` select `VPC-WordpressInstanceProfile`  
 Enable `T2/T3 Unlimited`  
 _Even though it says Additional Changes may apply thats only if the rolling 24 hour average exceeds baseline, it won't_  
 Click `Next: Add Storage`  
@@ -30,7 +30,7 @@ Click `Add Tag`
 Set `Key` to `Name` & set `Value` to `Wordpress-Manual`  
 Click `Next: Configure Security Group`  
 Check `Select an existing security group`  
-Select `A4LVPC-SGWordpress` it will have randomness after it, thats ok :)  
+Select `VPC-SGWordpress` it will have randomness after it, thats ok :)  
 Click `Review and Launch`  
 Click `Continue` to the port 22 warning, thats ok  
 Click `Launch`  
@@ -53,7 +53,7 @@ Set Description to `Wordpress Database User`
 Set Tier to `Standard`  
 Set Type to `String`  
 Set Data type to `text`  
-Set `Value` to `ramosdb`  
+Set `Value` to `framos`  
 Click `Create parameter`  
 
 ### Create Parameter - DBName (the name of the wordpress database)  
@@ -209,31 +209,14 @@ Open the EC2 instance using the DNS name
 
 ## Perform Initial Configuration and make a post
 
-in `Site Title` enter `Catagram`  
-in `Username` enter `admin`
-in `Password` it should suggest a strong password for the wordpress admin user, feel free to use this or choose your own - regardless, write it down somewhere safe.  
+Enter the name of your site in  `Site Title`. 
+In `Username` enter the name stored on DBUser
+In `Password` enter the name stored on DBPassword
 in `Your Email` enter your email address  
 Click `Install WordPress`
-Click `Log In`  
-In `Username or Email Address` enter `admin`  
-in `Password` enter the previously noted down strong password  
-Click `Log In`  
+Click `Log In` and enter the User and Password
 
-Click `Posts` in the menu on the left  
-Select `Hello World!` 
-Click `Bulk Actions` and select `Move to Trash`
-Click `Apply`  
-
-Click `Add New`  
-If you see any popups close them down  
-For title `The Best Animal(s)!`  
-Click the `+` under the title, select  `Gallery` 
-Click `Upload`  
-Select some animal pictures.... if you dont have any use google images to download some  
-Upload them  
-Click `Publish`  
-Click `Publish`
-Click `view Post`  
+Play around with adding pages and posts.
 
 This is your working, manually installed and configured wordpress
 

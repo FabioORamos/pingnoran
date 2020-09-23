@@ -1,92 +1,82 @@
 # Advanced Demo - Web App - Single Server to Elastic Evolution
 
-![Stage3 - PNG](https://github.com/acantril/learn-cantrill-io-labs/blob/master/aws-elastic-wordpress-evolution/02_LABINSTRUCTIONS/STAGE3%20-%20SPLIT%20OUT%20RDS.png)
-
 In stage 3 you will be splitting out the database functionality from the EC2 instance .. running MariaDB to an RDS instance running the MySQL Engine.  
 This will allow the DB and Instance to scale independently, and will allow the data to be secure past the lifetime of the EC2 instance.  
 
-# STAGE 3A - Create RDS Subnet Group
+# Create RDS Subnet Group
 
-A subnet group is what allows RDS to select from a range of subnets to put its databases inside  
-In this case you will give it a selection of 3 subnets sn-db-A / B and C  
+A subnet group is what allows RDS to select from a range of subnets to put its databases inside.
+In this case you will give it a selection of 3 subnets sn-db-A / B and C.
 RDS can then decide freely which to use.  
 
-Move to the RDS Console https://console.aws.amazon.com/rds/home?region=us-east-1#  
-Click `SubNet Groups`  
-Click `Create DB Subnet Group`  
+Go to the RDS Console 
+Click `Subnet Groups`  and `Create DB Subnet Group`  
 Under `Name` enter `WordPressRDSSubNetGroup`  
 Under `Description` enter `RDS Subnet Group for WordPress`  
-Under `VPC` select `A4LVPC`  
+Under `VPC` select `Pingnoran`  
 
 Under `Add subnets`
-In `Availability Zones` select `us-east-1a` & `us-east-1b` & `us-east-1c`  
-Under `Subnets` check the box next to 
+In `Availability Zones` select `all of the subnets.  
 
+Under `Subnets` check the box next to:
 - 10.16.16.0/20 (this is sn-db-A)
 - 10.16.80.0/20 (this is sn-db-B)
 - 10.16.144.0/20 (this is sn-db-C)
-
 Click `Create`  
 
-# STAGE 3B - Create RDS Instance
+# Create RDS Instance
 
-In this sub stage of the demo, you are going to provision an RDS instance using the subnet group to control placement within the VPC.   
-Normally you would use multi-az for production, to keep costs low, for now you should use a single AZ as per the instructions below.  
+It is time to provision an RDS instance using the subnet group to control placement within the VPC.   
+Normally you would use multi-az for production, but to keep costs low, you should use a single AZ as per the instructions below.  
 
 Click `Databases`  
 Click `Create Database`  
 Click `Standard Create`  
 Click `MySql`  
-Under `Version` select `MySQL 5.6.46` (best aurora compatability for snapshot migrations)  
+Under `Version` select `MySQL 5.6.46` (Best Aurora compatability for snapshot migrations)  
 
 Scroll down and select `Free Tier` under templates
 _this ensures there will be no costs for the database but it will be single AZ only_
 
-under `Db instance identifier` enter `a4lWordPress`
-under `Master Username` enter enter the value from here https://console.aws.amazon.com/systems-manager/parameters/A4L/Wordpress/DBUser/description?region=us-east-1&tab=Table  
-under `Master Password` and `Confirm Password` enter the value from here https://console.aws.amazon.com/systems-manager/parameters/A4L/Wordpress/DBPassword/description?region=us-east-1&tab=Table  
-
+Under `DB instance identifier` enter `Pingnoran-WordPress`
+Under `Master Username` and `Master Password` enter enter the values previously recorded in the parameter store.
 Under `DB Instance size`, then `DB instance class`, then `Burstable classes (includes t classes)` make sure db.t2.micro is selected  
-Scroll down, under `Connectivity`, `Virtual private cloud (VPC)` select `A4LVPC`  
+Scroll down, under `Connectivity`, `Virtual private cloud (VPC)` select `Pingnoran`  
 Expand `Additional connectivity configuration` 
 Ensure under `Subnet group` that `wordpressrdssubnetgroup` is selected  
 Make sure `Publicly accessible` is set to `No`  
-Under `Existing VPC security groups` add `A4LVPC-SG-Database` and remove `Default`  
-Under `Availability Zone` set `us-east-1a`  
+Under `Existing VPC security groups` add `VPC-SG-Database` and remove `Default`  
+Under `Availability Zone` set `ap-southeast-2a`  
 Scroll down and expand `Additional configuration`  
-in the `Initial database name` box enter the value from here https://console.aws.amazon.com/systems-manager/parameters/A4L/Wordpress/DBName/description?region=us-east-1&tab=Table  
-Scroll to the bottom and click `create Database`  
+In the `Initial database name` box enter the value DBName from the parameter store
+Scroll to the bottom and click `Create Database`  
 
-** this will take anywhere up to 30 minutes to create ... it will need to be fully ready before you move to the next step - coffee time !!!! **
+** This will take anywhere up to 30 minutes to create ... it will need to be fully ready before you move to the next step - coffee time or go for a swim!!!! **
 
-# STAGE 3C - Migrate WordPress data from MariaDB to RDS
+# Migrate WordPress data from MariaDB to RDS
 
-Open the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home:  
-Click `Instances`  
-Locate the `WordPress-LT` instance, right click, `Connect` and choose `Session Manager` and then click `Connect`  
-Type `bash`  
-Type `cd`  
-Type `clear`  
+Open the EC2 Console and locate the `WordPress-LT` instance, right click, `Connect` and choose `Session Manager` and then click `Connect`  
+Type `sudo bash` and `cd`
 
 ## Populate Environment Variables
 
-You're going to do an export of the SQL database running on the local ec2 instance
+You're going to do an export of the SQL database running on the local EC2 instance
 
 First run these commands to populate variables with the data from Parameter store, it avoids having to keep locating passwords  
 ```
-DBPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
+DBPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
 DBPassword=`echo $DBPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBRootPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
+DBRootPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
 DBRootPassword=`echo $DBRootPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBUser=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBUser --query Parameters[0].Value)
+DBUser=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBUser --query Parameters[0].Value)
 DBUser=`echo $DBUser | sed -e 's/^"//' -e 's/"$//'`
 
-DBName=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBName --query Parameters[0].Value)
+DBName=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBName --query Parameters[0].Value)
 DBName=`echo $DBName | sed -e 's/^"//' -e 's/"$//'`
 
-DBEndpoint=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBEndpoint --query Parameters[0].Value)
+DBEndpoint=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBEndpoint --query Parameters[0].Value)
 DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
 
 ```
@@ -96,50 +86,39 @@ DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
 To take a backup of the database run
 
 ```
-mysqldump -h $DBEndpoint -u $DBUser -p$DBPassword $DBName > a4lWordPress.sql
+mysqldump -h $DBEndpoint -u $DBUser -p$DBPassword $DBName > PingnoranWordPress.sql
 ```
 ** in production you wouldnt put the password in the CLI like this, its a security risk since a ps -aux can see it .. but security isnt the focus of this demo its the process of rearchitecting **
 
 ## Restore that Backup into RDS
 
-Move to the RDS Console https://console.aws.amazon.com/rds/home?region=us-east-1#databases:  
-Click the `a4lWordPressdb` instance  
-Copy the `endpoint` into your clipboard  
-Move to the Parameter store https://console.aws.amazon.com/systems-manager/parameters?region=us-east-1  
-Check the box next to `/A4L/Wordpress/DBEndpoint` and click `Delete`
-Click `Create Parameter`  
+Move to the RDS Console
+Click the `pingnoran-wordpress` instance  
+Copy the `endpoint` into your clipboard and substitute the value on the parameter store from localhost to the RDS endpoint
 
-Under `Name` enter `/A4L/Wordpress/DBEndpoint`  
-Under `Descripton` enter `WordPress Endpoint Name`  
-Under `Tier` select `Standard`    
-Under `Type` select `String`  
-Under `Data Type` select `text`  
-Under `Value` enter the RDS endpoint endpoint you just copied  
-Click `Create Parameter`  
-
-Update the DbEndpoint environment variable with 
+Update the DBEndpoint environment variable with 
 
 ```
-DBEndpoint=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBEndpoint --query Parameters[0].Value)
+DBEndpoint=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBEndpoint --query Parameters[0].Value)
 DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
 ```
 
 Restore the database export into RDS using
 
 ```
-mysql -h $DBEndpoint -u $DBUser -p$DBPassword $DBName < a4lWordPress.sql 
+mysql -h $DBEndpoint -u $DBUser -p$DBPassword $DBName < PingnoranWordPress.sql 
 ```
 
 ## Change the WordPress config file to use RDS
 
-this command will substitute `localhost` in the config file for the contents of `$DBEndpoint` which is the RDS instance
+This command will substitute `localhost` in the config file for the contents of `$DBEndpoint` which is the RDS instance
 
 ```
 sed -i "s/'localhost'/'$DBEndpoint'/g" /var/www/html/wp-config.php
 ```
 
 
-# STAGE 3D - Stop the MariaDB Service
+## Stop the MariaDB Service
 
 ```
 sudo systemctl disable mariadb
@@ -147,7 +126,7 @@ sudo systemctl stop mariadb
 ```
 
 
-# STAGE 3E - Test WordPress
+# Test WordPress
 
 Move to the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name  
 Select the `WordPress-LT` Instance  
@@ -156,9 +135,9 @@ Open the IP in a new tab
 You should see the blog, working, even though MariaDB on the EC2 instance is stopped and disabled
 Its now running using RDS  
 
-# STAGE 3F - Update the LT so it doesnt install 
+# Update the LT so it doesnt install 
 
-Move to the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home:  
+Move to the EC2 Console:  
 Under `Instances` click `Launch Templates`  
 Select the `WordPress` launch Template (select, dont click)
 Click `Actions` and `Modify Template (Create new version)`  
@@ -193,7 +172,7 @@ Click `Actions` and select `Set Default Version`
 Under `Template version` select `2`  
 Click `Set as default version`  
 
-# STAGE 3 - FINISH  
+# FINISH  
 
 This configuration has several limitations :-
 
@@ -207,6 +186,6 @@ This configuration has several limitations :-
 - The IP of the instance is hardcoded into the database ....
 
 
-You can now move onto STAGE3
+You can now move onto STAGE4
 
 

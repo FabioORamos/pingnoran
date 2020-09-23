@@ -1,0 +1,52 @@
+#!/bin/bash -xe
+
+DBPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
+DBPassword=`echo $DBPassword | sed -e 's/^"//' -e 's/"$//'`
+
+DBRootPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
+DBRootPassword=`echo $DBRootPassword | sed -e 's/^"//' -e 's/"$//'`
+
+DBUser=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBUser --query Parameters[0].Value)
+DBUser=`echo $DBUser | sed -e 's/^"//' -e 's/"$//'`
+
+DBName=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBName --query Parameters[0].Value)
+DBName=`echo $DBName | sed -e 's/^"//' -e 's/"$//'`
+
+DBEndpoint=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBEndpoint --query Parameters[0].Value)
+DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
+
+yum -y update
+yum -y upgrade
+
+yum install -y mariadb-server httpd wget
+amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+amazon-linux-extras install epel -y
+yum install stress -y
+
+systemctl enable httpd
+systemctl enable mariadb
+systemctl start httpd
+systemctl start mariadb
+
+mysqladmin -u root password $DBRootPassword
+
+wget http://wordpress.org/latest.tar.gz -P /var/www/html
+cd /var/www/html
+tar -zxvf latest.tar.gz
+cp -rvf wordpress/* .
+rm -R wordpress
+rm latest.tar.gz
+
+sudo cp ./wp-config-sample.php ./wp-config.php
+sed -i "s/'database_name_here'/'$DBName'/g" wp-config.php
+sed -i "s/'username_here'/'$DBUser'/g" wp-config.php
+sed -i "s/'password_here'/'$DBPassword'/g" wp-config.php
+sed -i "s/'localhost'/'$DBEndpoint'/g" wp-config.php
+
+usermod -a -G apache ec2-user   
+chown -R ec2-user:apache /var/www
+chmod 2775 /var/www
+find /var/www -type d -exec chmod 2775 {} \;
+find /var/www -type f -exec chmod 0664 {} \;
+
+

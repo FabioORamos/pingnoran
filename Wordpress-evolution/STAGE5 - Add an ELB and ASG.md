@@ -1,37 +1,34 @@
 # Advanced Demo - Web App - Single Server to Elastic Evolution
 
-![Stage5 - PNG](https://github.com/acantril/learn-cantrill-io-labs/blob/master/aws-elastic-wordpress-evolution/02_LABINSTRUCTIONS/STAGE5%20-%20ASG%20%26%20ALB.png)
-
 In stage 5 of this advanced demo lesson, you will be adding an auto scaling group to provision and terminate instances automatically based on load on the system.  
 
-You have already performed all of the preperation steps required, my moving data storage onto RDS, media storage onto EFS and created a launch template to automatically build the wordpress application servers.  
+You have already performed all of the preparation steps required, by moving data storage onto RDS, media storage onto EFS and created a launch template to automatically build the wordpress application servers.  
 
-# STAGE 5A - Create the load balancer
+# Create the load balancer
 
-Move to the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home:  
+Move to the EC2 console 
 Click `Load Balancers` under `Load Balancing`  
 Click `Create Load Balancer`  
 Click `Create` under `Application Load Balancer`  
-Under name enter `A4LWORDPRESSALB`  
-Ensure `internet-facing` is selected  
-ensure `ipv4` selected for `IP Address type`  
+Under name enter `Pingnoran-WP-ALB`  
+Ensure `internet-facing` is selected and `ipv4` selected for `IP Address type`  
 
 Under `Listeners` `HTTP` and `80` should be selected for `Load Balancer Protocol` and `Load Balancer Port`  
 
 Scroll down, under `Availability Zones` 
-for VPC ensure `A4LVPC` is selected  
-Check boxes next to `us-east-1a`, `us-east-1b` and `us-east-1c`  
+for VPC ensure `Pingnoran` is selected  
+Check boxes next to `ap-southeast-2a`, `ap-southeast-2b` and `ap-southeast-2c`  
 Select `sn-pub-A`, `sn-pub-B` and `sn-pub-C` for each.  
 
 Scroll down and click `Next: Configure Security Settings`  
 because we're not using HTTP we can move past this  
 Click `Next: Configure Security Groups`  
-Check `Select an existing security group` and select `A4LVPC-SGLoadBalancer` it will have some random at the end and thats ok.  
+Check `Select an existing security group` and select `SGLoadBalancer` it will have some random at the end and thats ok.  
 
 Click `Next: Configure Routing`  
 
 for `Target Group` choose `New Target Group`  
-for Name choose `A4LWORDPRESSALBTG`  
+for Name choose `Pingnoran-WP-ALBTG`  
 for `Target Type` choose `Instance`  
 For `Protocol` choose `HTTP`  
 For `Port` choose `80`  
@@ -42,15 +39,15 @@ Click `Next: Register Targets`
 We wont register any right now, click `Next: Review`  
 Click `Create`  
 
-Click on the `A4LWORDPRESSALB` link  
+Click on the `Pingnoran-WP-ALB` link  
 Scroll down and copy the `DNS Name` into your clipboard  
 
-# STAGE 5B - Create a new Parameter store value with the ELB DNS name
+# Create a new Parameter store value with the ELB DNS name
 
-Move to the systems manager console https://console.aws.amazon.com/systems-manager/home?region=us-east-1#  
+Move to the systems manager console  
 Click `Paramater Store`  
 Click `Create Parameter`  
-Under `Name` enter `/A4L/Wordpress/ALBDNSNAME` 
+Under `Name` enter `/Pingnoran/Wordpress/ALBDNSNAME` 
 Under `Description` enter `DNS Name of the Application Load Balancer for wordpress`  
 for `Tier` set `Standard`  
 For `Type` set `String`  
@@ -58,12 +55,12 @@ for `Data Type` set `text`
 for `Value` set the DNS name of the load balancer you copied into your clipboard
 Click `Create Parameter` 
 
-# STAGE 5C - Update the Launch template to wordpress is updated with the ELB DNS as its home
+# Update the Launch template to wordpress is updated with the ELB DNS as its home
 
-Go to the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Home:  
+Go to the EC2 console 
 CLick `Launch Templates`  
 Check the box next to the `Wordpress` launch template, click `Actions` and click `Modify Template (Create New Version)`  
-for `Template version description` enter `App only, uses EFS filesystem defined in /A4L/Wordpress/EFSFSID, ALB home added to WP Database`  
+for `Template version description` enter `App only, uses EFS filesystem defined in /Pingnoran/Wordpress/EFSFSID, ALB home added to WP Database`  
 Scroll to the bottom and expand `Advanced Details`  
 Scroll to the bottom and find `User Data` expand the entry box as much as possible.  
 
@@ -71,12 +68,12 @@ After `#!/bin/bash -xe` position cursor at the end & press enter twice to add ne
 paste in this
 
 ```
-ALBDNSNAME=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/ALBDNSNAME --query Parameters[0].Value)
+ALBDNSNAME=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/ALBDNSNAME --query Parameters[0].Value)
 ALBDNSNAME=`echo $ALBDNSNAME | sed -e 's/^"//' -e 's/"$//'`
 
 ```
 
-Move all the way to the bottom of the `User Data` and paste iin this block
+Move all the way to the bottom of the `User Data` and paste in this block
 
 ```
 cat >> /home/ec2-user/update_wp_ip.sh<< 'EOF'
@@ -85,7 +82,7 @@ source <(php -r 'require("/var/www/html/wp-config.php"); echo("DB_NAME=".DB_NAME
 SQL_COMMAND="mysql -u $DB_USER -h $DB_HOST -p$DB_PASSWORD $DB_NAME -e"
 OLD_URL=$(mysql -u $DB_USER -h $DB_HOST -p$DB_PASSWORD $DB_NAME -e 'select option_value from wp_options where option_id = 1;' | grep http)
 
-ALBDNSNAME=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/ALBDNSNAME --query Parameters[0].Value)
+ALBDNSNAME=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/ALBDNSNAME --query Parameters[0].Value)
 ALBDNSNAME=`echo $ALBDNSNAME | sed -e 's/^"//' -e 's/"$//'`
 
 $SQL_COMMAND "UPDATE wp_options SET option_value = replace(option_value, '$OLD_URL', 'http://$ALBDNSNAME') WHERE option_name = 'home' OR option_name = 'siteurl';"
@@ -107,13 +104,13 @@ Under `Template version` select `4`
 Click `Set as default version`  
 
 
-# STAGE 5D - Create an auto scaling group (no scaling yet)
+# Create an auto scaling group (no scaling yet)
 
 Move to the EC2 console  
 under `Auto Scaling`  
 click `Auto Scaling Groups`  
 Click `Create an Auto Scaling Group`  
-For `Auto Scaling group name` enter `A4LWORDPRESSASG`  
+For `Auto Scaling group name` enter `Pingnoran-WP-ASG`  
 Under `Launch Template` select `Wordpress`  
 Under `Version` select `Latest`  
 Scroll down and click `Next`  

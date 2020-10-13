@@ -1,3 +1,5 @@
+This section notes are dedicated to cover the AWS Networking and Hybrid section from the SA Pro course by Adrian Cantrill. Some notes were also derived from the SA Associate course by Stéphane Maarek.
+
 # VPC – Virtual Private Cloud
 
 Virtual network or data centre inside AWS
@@ -76,16 +78,33 @@ VPC Peering
 -	Must not have overlapping CIDR
 -	Must update route tables in each VPCs subnets
 
-Site to Site VPN
+## Site to Site VPN
 
-Virtual Private Gateway
--	VPN concentrator on the AWS side of the VPN Connection
--	VGW is created and attached to the VPC
--	Can customise ASN (Autonomous System Number)
+Logical connection between a VPC and on-premises network encrypted using IPSec, running over the public internet
+- You can run a VPN over Direct Connect to avoid going over the public internet
 
-Customer Gateway
--	Software application or physical device on customer side
--	IP Address is static and have an internet routable IP Address
+Static vs Dynamic VPN
+- Static network
+    - Simple to setup but there are limits with highly availability and direct connect setup
+    - Routes for remote side added to route tables as static routes
+    - Networks for remote side statically configured on the VPN connection
+    - No load balancing and multi-connection fail over
+- Dynamic VPN uses BGP
+    - Routes for remote side added to route tables as static routes
+    - BGP is configured on both the customer and AWS side using ASN.
+    - Networks are exchanged via BGP
+    - Multiple VPN connections provide HA and traffic distribution
+
+`AWS Direct Connect + VPN provides an IPsec-encrypted private connection`
+
+### Virtual Private Gateway (VGW)
+- VPN concentrator on the AWS side of the VPN Connection
+- VGW is created and attached to the VPC
+- Can customise ASN (Autonomous System Number)
+
+### Customer Gateway (CGW)
+- Software application or physical device on customer side
+- IP Address is static and have an internet routable IP Address
 
 ## VPC Endpoints
 -	Allow you to connect to AWS Services using a private network
@@ -113,7 +132,6 @@ o	Hosted
 -	Lead times are often longer than one month
 -	Data in transit is not encrypted – just private
 
-`AWS Direct Connect + VPN provides an IPsec-encrypted private connection`
 
 Egress Only Internet Gateway
 -	IPv6 only
@@ -148,3 +166,25 @@ Capture network info from AWS managed interfaces:
 Can be used for analytics on:
 - Usage patterns
 - Malicious behaviour
+
+
+# Border Gateway Protocol
+
+Autonomous system (AS): Routers controlled by one entity
+ASN are unique and allocated by IANA
+BGP is a *path-vector* protocol 
+The best path to destination is determined by the least number of hops. If you need to trick the system in using another path (i.e. the other path has better connection), you can do AS Path Prepending.
+Path is called **ASPATH**
+
+# Transit Gateway (TGW)
+
+Network Transit Hub to connect VPCs to on premises networks
+Significantly reduces network complexity
+Connections are transitive
+Attachments to other network types
+VPC, Site-to-site VPN, Direct Connect Gateway
+
+# Accelerated Site-to-Site VPN
+Use Edge locations
+Acceleration can be enabled when creating a TGW VPN attachment
+Not compatible with VPNs unsing a VGW

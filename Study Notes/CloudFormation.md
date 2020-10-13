@@ -26,11 +26,6 @@
 * Best way to perform collaboration cross stack
 * Can’t delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation 
 
-## Stack
-* Cross Stack Reference
-    * Create a second template that leverages the security group
-    * Use Fn::ImportValue function
-
 ## Conditions
 * Used to control the creation of resources or outputs based on a condition
 * Common conditions:
@@ -45,21 +40,27 @@
     * Fn::Not	
     * Fn::Or
 
-## NestedStack
-* Stacks that are part of other stacks
-* Allow you to isolate repeated patterns/common components in separate stacks and call them from other stacks
-* Considered best practices
-* To update a nested stack, always update the parent (root stack)
-
-## CrossStack
-* Helpful when stacks have different life cycles
-* When you need to pass export values to many stacks 
+## Stack
+* Cross Stack Reference
+    * Create a second template that leverages the security group
+    * Use Fn::ImportValue function
 
 ## ChangeSets
 * You get a prompt informing you of the changes that will occur on your updated stack
 * It won’t say if the update will be successful
 
-## StackSets
+
+# NestedStack
+* Stacks that are part of other stacks
+* Allow you to isolate repeated patterns/common components in separate stacks and call them from other stacks
+* Considered best practices
+* To update a nested stack, always update the parent (root stack)
+
+# CrossStack
+* Helpful when stacks have different life cycles
+* When you need to pass export values to many stacks 
+
+# StackSets
 * Create, update or delete stacks across multiple accounts and regions with a single operation
 * Administrator account to create StackSets
 * Trusted accounts to create, update, delete stack instances from StackSets

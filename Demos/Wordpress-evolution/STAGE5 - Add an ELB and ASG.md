@@ -119,17 +119,17 @@ For `Network` `VPC` select `A4LVPC`
 For `Subnets` select `sn-Pub-A`, `sn-pub-B` and `sn-pub-C`  
 Click `next`  
 
-# STAGE 5E - Integrate ASG and ALB
+# Integrate ASG and ALB
 
-Its here where we integrate the ASG with the Load Balanacer. Load balancers actually work (for EC2) with static instance registrations. What ASG does, it link with a target group, any instances provisioned by the ASG are added to the target group, anything terminated is removed.  
+Its here where we integrate the ASG with the Load Balancer. Load balancers actually work (for EC2) with static instance registrations. What ASG does, it link with a target group, any instances provisioned by the ASG are added to the target group, anything terminated is removed.  
 
 Check the `Enable Load balancing` box  
 Ensure `Application Load Balancer or Network Load Balancer` is selected.  
-for `Choose a target group for your load balancer` sekect `A4LWORDPRESSALBTG`  
+for `Choose a target group for your load balancer` sekect `Pingnoran-ALBTG`  
 Under `health Checks - Optional` choose `ELB`  
 Scroll down and click `Next`  
 
-For now leave `Desired` `Mininum` and `Maximum` at `1`   
+For now leave `Desired` `Minimum` and `Maximum` at `1`   
 For `Scaling policies - optional` leave it on `None`  
 Make sure `Enable instance scale-in protection` is **NOT** checked  
 Click `Next`  

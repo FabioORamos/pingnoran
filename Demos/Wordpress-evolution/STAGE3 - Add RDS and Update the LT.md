@@ -56,7 +56,7 @@ Scroll to the bottom and click `Create Database`
 # Migrate WordPress data from MariaDB to RDS
 
 Open the EC2 Console and locate the `WordPress-LT` instance, right click, `Connect` and choose `Session Manager` and then click `Connect`  
-Type `sudo bash` and `cd`
+Type `bash` and `cd`
 
 ## Populate Environment Variables
 

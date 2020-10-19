@@ -54,7 +54,11 @@ amazon-linux-extras install epel -y
 yum install stress -y
 
 systemctl enable httpd
+systemctl enable mariadb
 systemctl start httpd
+systemctl start mariadb
+
+mysqladmin -u root password $DBRootPassword
 
 wget http://wordpress.org/latest.tar.gz -P /var/www/html
 cd /var/www/html

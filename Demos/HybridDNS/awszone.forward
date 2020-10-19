@@ -1,0 +1,5 @@
+zone "aws.pingnoran.com" { 
+  type forward; 
+  forward only;
+  forwarders { IP1; IP2; }; 
+};

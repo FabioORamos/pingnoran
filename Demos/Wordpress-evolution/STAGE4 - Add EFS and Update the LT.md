@@ -69,7 +69,7 @@ First we need to install the amazon EFS utilities to allow the instance to conne
 sudo yum -y install amazon-efs-utils
 ```
 
-next you need to migrate the existing media content from wp-content into EFS, and this is a multi step process.
+Next you need to migrate the existing media content from wp-content into EFS, and this is a multi step process.
 
 First, copy the content to a temporary location and make a new empty folder.
 

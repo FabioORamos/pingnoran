@@ -1,23 +1,23 @@
 
-Description:  Animals4Life Hybrid DNS Demo - AWS
+Description:  Pingnoran Hybrid DNS Demo - AWS
 Parameters:
   LatestAmiId:
     Description: AMI for EC2 instances (default = AmaLinux Latest)
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 Resources:
-  DNSA4LCOM:
+  DNSPINGCOM:
     Type: "AWS::Route53::HostedZone"
     Properties:
-      Name: 'aws.animals4life.org'
+      Name: 'aws.pingnoran.com'
       VPCs:
         - VPCId: !Ref VPC
           VPCRegion: !Ref AWS::Region
-  DNSA4LCOMWEB:
+  DNSPINGCOMWEB:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneId: !Ref DNSA4LCOM
-      Name: web.aws.animals4life.org
+      HostedZoneId: !Ref DNSPINGCOM
+      Name: web.aws.pingnoran.com
       Type: A
       TTL: '60'
       ResourceRecords:
@@ -31,7 +31,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: a4l-aws
+          Value: pingnoran-aws
   SubnetPRIVATEA:
     Type: AWS::EC2::Subnet
     Properties:
@@ -47,7 +47,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: A4L-AWS-RT
+        Value: pingnoran-AWS-RT
   SubnetPRIVATEB:
     Type: AWS::EC2::Subnet
     Properties:
@@ -115,7 +115,7 @@ Resources:
         - !Ref AWSSecurityGroup
       Tags:
         - Key: Name
-          Value: A4L-AWS-EC2-A
+          Value: Pingnoran-AWS-EC2-A
   EC2B:
     Type: AWS::EC2::Instance
     DependsOn: 
@@ -131,7 +131,7 @@ Resources:
         - !Ref AWSSecurityGroup
       Tags:
         - Key: Name
-          Value: A4L-AWS-EC2-B
+          Value: Pingnoran-AWS-EC2-B
   EC2Role:
     Type: 'AWS::IAM::Role'
     Properties:

@@ -56,7 +56,7 @@ Scroll to the bottom and click `Create Database`
 # Migrate WordPress data from MariaDB to RDS
 
 Open the EC2 Console and locate the `WordPress-LT` instance, right click, `Connect` and choose `Session Manager` and then click `Connect`  
-Type `bash` and `cd`
+Type `sudo bash` and `cd`
 
 ## Populate Environment Variables
 
@@ -88,7 +88,7 @@ To take a backup of the database run
 ```
 mysqldump -h $DBEndpoint -u $DBUser -p$DBPassword $DBName > PingnoranWordPress.sql
 ```
-** in production you wouldnt put the password in the CLI like this, its a security risk since a ps -aux can see it .. but security isnt the focus of this demo its the process of rearchitecting **
+** In production you wouldnt put the password in the CLI like this, its a security risk since a ps -aux can see it, but security isn't the focus of this demo its the process of rearchitecting **
 
 ## Restore that Backup into RDS
 
@@ -128,7 +128,7 @@ sudo systemctl stop mariadb
 
 # Test WordPress
 
-Move to the EC2 Console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name  
+Move to the EC2 Console  
 Select the `WordPress-LT` Instance  
 copy the `IPv4 Public IP` into your clipboard  
 Open the IP in a new tab  

@@ -59,3 +59,38 @@ Secondary ENI can be moved (detached and attached) between instances but subnets
 A primary private IPv4 address is allocated to the ENI and will remain static for the duration of the EC2 instance
 
 ## Bootstrapping vs AMI Baking
+
+# CloudWatch
+
+With CloudWatch you can do:
+* Metrics: Collect and track key metrics
+* Logs: Collect, monitor, analyse and store log files
+* Events: send notifications when certain events happen in your AWS
+* Alarms: react in real-time to metrics/events
+
+
+## CloudWatch Metrics
+* EC2 RAM is not a built-in metric
+
+CloudWatch Alarms:
+- Can trigger actions: 
+    - EC2 action (reboot, stop, terminate, recover)
+    - Auto Scaling
+    - SNS. SNS can then send this info to:
+        - SQS through Fan-Out
+        - Lambda function to react to it
+    - Alarm events can be intercepted by CloudWatch Events
+        - Info can then be sent to:
+            - Compute: Lambda, Batch, ECS Task
+            - Orchestration: Step Functions, CodePipeline, CodeBuild
+            - Integration: SQS, SNS, Kinesis DataStreams, Kinesis FireHose
+            - Maintenance: SSM, EC2 Actions
+Monitoring period:
+- AWS Provided metrics 
+    - Basic (default): 5min
+    - Detailed monitoring (paid): 1min
+    - Includes: CPU, Network, Disk and Status check metrics
+- Custom metrics
+    - Basic: 1min (in custom metrics this is the standard)
+    - High resolution: up to 1s (StorageResolution parameter)
+    - Includes: RAM, application level metrics

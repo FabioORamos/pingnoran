@@ -23,7 +23,7 @@ You will be presented with your `Identity Pool ID`, note this down, you will nee
 
 The serverless application is going to read images out of a private bucket created by the initial cloudformation template.    
 The bucket is called `patchesprivatebucket`    
-Move to the IAM Console https://console.aws.amazon.com/iam/home?region=us-east-1#/home    
+Move to the IAM Console   
 Click `Roles`   
 Locate and click on `Cognito_PetIDFIDPoolAuth_Role`  
 Click on `Trust Relationships`  
@@ -33,9 +33,9 @@ With two conditions
 - `ForAnyValue:StringLike` `cognito-identity.amazonaws.com:amr` `authenticated`  
 This means to assume this role - you have to be authenticated by one of the ID providers defined in the cognito ID pool.    
 
-When you use WEDIDF with cognito, this role is assumed on your behalf by cognito, and its what generates temporary AWS credentials which are used to access AWS resources.  
+When you use WEDIDF with Cognito, this role is assumed on your behalf by Cognito, and its what generates temporary AWS credentials which are used to access AWS resources.  
 
-Click `permissions` .. this defines what these credentials can do.  
+Click `permissions` - this defines what these credentials can do.  
 
 The cloudformation template created a managed policy which can access the `privatepatches` bucket  
 Click `Attach Policies`   
@@ -45,7 +45,7 @@ Check the box next to `PrivatePatchesPermissions` and click `Attach Policy`
 
 # STAGE 3 - FINISH    
 
-- template front end app bucket  
+- Template front end app bucket  
 - Configured Google API Project  
 - Credentials to access it  
 - Cognito ID Pool  

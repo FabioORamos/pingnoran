@@ -25,7 +25,7 @@ function signInCallback(authResult) {
     // adding google access token to Cognito credentials login map
     AWS.config.region = 'ap-southeast-2'; 
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: 'XX-XXXX-X:XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', // MAKE SURE YOU REPLACE THIS
+      IdentityPoolId: 'ap-southeast-2:446fc6bf-eb9f-4a4f-8cdb-963c503b9bda', // MAKE SURE YOU REPLACE THIS
       Logins: {
         'accounts.google.com': authResult['id_token']
       }
@@ -59,7 +59,7 @@ function testAWS() {
   
   var s3 = new AWS.S3();
   var params = {
-    Bucket: "REPLACE_ME_PRIVATE_PATCHES_BUCKET" // MAKE SURE YOU REPLACE THIS
+    Bucket: "webidf-patchesprivatebucket-1xblto41dpsac" // MAKE SURE YOU REPLACE THIS
   }; 
 
   s3.listObjects(params, function(err, data) {

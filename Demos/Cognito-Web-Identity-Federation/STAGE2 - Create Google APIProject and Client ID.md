@@ -2,13 +2,13 @@
 
 # STAGE 2A - Create Google API PROJECT  
 
-Any application that uses OAuth 2.0 to access Google APIs must have authorization credentials that identify the application to Google's OAuth 2.0 server  
+Any application that uses OAuth 2.0 to access Google APIs must have authorization credentials that identify the application to Google's OAuth 2.0 server.  
 In this stage we need to create those authorization credentials.  
 
 You will need a valid google login, GMAIL will do.  
 If you don't have one, you will need to create one as part of this process.  
 Move to the Google Credentials page https://console.developers.google.com/apis/credentials    
-Either sign in, or create a google account  
+Either sign in, or create a Google account  
 
 You will be moved to the `Google API Console`    
 You may have to set your country and agree to some terms and conditions, thats fine go ahead and do that.    
@@ -40,7 +40,7 @@ Under Name enter `PetIDFServerlessApp`
 
 We need to add the S3 bucket URL, this is the Static Website Hosting Endpoints you noted down earlier.   
 Click `ADD URI` under `Authorized JavaScript origins`   
-Enter the endpoint URL, it should look something like this `http://webidf-appbucket-jkj6jpdfewk4.s3-website-us-east-1.amazonaws.com` but you NEED to use your own.   
+Enter the endpoint URL, it should look something like this `http://webidf-appbucket-jnxw37ll2eib.s3-website-ap-southeast-2.amazonaws.com/` but you NEED to use your own.   
 Click `CREATE`  
 
 You will be presented with two pieces of information  

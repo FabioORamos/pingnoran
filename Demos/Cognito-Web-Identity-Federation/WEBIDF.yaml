@@ -1,11 +1,11 @@
 Description: WEBIDF Demo
 Parameters:
   labss3contentbucket:
-    Description: Bucket for labs s3 content
+    Description: Bucket for labs S3 content
     Type: String
     Default: cl-labs-s3content
   labss3contentprefix:
-    Description: Bucket for labs s3 content
+    Description: Bucket for labs S3 content
     Type: String
     Default: aws-cognito-web-identity-federation/appbucket
 Resources:

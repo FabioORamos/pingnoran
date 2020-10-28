@@ -14,7 +14,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: A4L-AWS
+          Value: Pingnoran-AWS
   SubnetPrivateA:
     Type: AWS::EC2::Subnet
     Properties:
@@ -39,7 +39,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: A4L-AWS-RT
+        Value: Pingnoran-AWS-RT
   TGWDefaultRoute:
     Type: AWS::EC2::Route
     DependsOn: "TGWVPC"
@@ -63,7 +63,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref VPC
-      GroupDescription: Default A4L AWS SG
+      GroupDescription: Default Pingnoran AWS SG
       SecurityGroupIngress: 
         - Description: 'Allow SSH IPv4 IN'
           IpProtocol: tcp
@@ -217,7 +217,7 @@ Resources:
     Type: "AWS::EC2::TransitGateway"
     Properties:
       AmazonSideAsn: 64512
-      Description: "A4LTGW"
+      Description: "PingnoranTGW"
       DefaultRouteTableAssociation: "enable"
       DnsSupport: "enable"
       VpnEcmpSupport: "enable"
@@ -229,6 +229,6 @@ Resources:
         - !Ref SubnetPrivateB
       Tags: 
         - Key: Name
-          Value: A4LTGWATTACHMENT
+          Value: PingnoranTGWATTACHMENT
       TransitGatewayId: !Ref TGW
       VpcId: !Ref VPC    

@@ -1,8 +1,0 @@
-
-Description:  Basic S3 Bucket
-Resources:
-  animalpics:
-    Type: AWS::S3::Bucket
-
-
-

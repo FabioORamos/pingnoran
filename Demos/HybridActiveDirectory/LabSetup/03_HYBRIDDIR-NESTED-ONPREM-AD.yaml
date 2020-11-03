@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: https://learn.cantrill.io - Advanced Demo - Hybrid Active Directory ONPREM NESTED AD
+Description: Advanced Demo - Hybrid Active Directory ONPREM NESTED AD from https://learn.cantrill.io adapted by Fabio Ramos
 Parameters:
   ADInstanceType:
     Type: String
@@ -45,7 +45,7 @@ Parameters:
     Type: String
   DomainDNSName:
     AllowedPattern: '[a-zA-Z0-9\-]+\..+'
-    Default: ad.animals4life.org
+    Default: ad.pingnoran.com
     Description: Fully qualified domain name (FQDN) of the domain
     MaxLength: '255'
     MinLength: '2'
@@ -89,7 +89,7 @@ Parameters:
       It cannot start or end with a hyphen (-).
     Type: String
   QSS3BucketRegion:
-    Default: 'us-east-1'
+    Default: 'ap-southeast-2'
     Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
     Type: String
   QSS3KeyPrefix:
@@ -110,7 +110,7 @@ Resources:
   STACKLOGS:
     Type: AWS::Logs::LogGroup
     Properties: 
-      LogGroupName: !Sub '/learncantrill/HYBRIDDIR-NESTED-AD/${AWS::StackName}'
+      LogGroupName: !Sub '/pingnoran/HYBRIDDIR-NESTED-AD/${AWS::StackName}'
       RetentionInDays: 30
   DHCPOptions:
     Type: AWS::EC2::DHCPOptions

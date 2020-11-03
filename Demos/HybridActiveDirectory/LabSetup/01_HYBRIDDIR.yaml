@@ -18,7 +18,6 @@ Metadata:
           - AWSPrivateSubnetACIDR
           - AWSPrivateSubnetBCIDR
           - AWSPrivateSubnetCCIDR
-          - AWSPrivateSubnetDCIDR
       - Label:
           default: Microsoft Active Directory configuration (Simulated On-Premises)
         Parameters:
@@ -84,14 +83,14 @@ Parameters:
     Type: String
   DomainDNSName:
     AllowedPattern: '[a-zA-Z0-9\-]+\..+'
-    Default: ad.animals4life.org
+    Default: ad.pingnoran.com
     Description: Fully qualified domain name (FQDN) of the domain
     MaxLength: '255'
     MinLength: '2'
     Type: String
   DomainNetBIOSName:
     AllowedPattern: '[a-zA-Z0-9\-]+'
-    Default: A4L
+    Default: Pingo
     Description: NetBIOS name of the domain (up to 15 characters)
     MaxLength: '15'
     MinLength: '1'
@@ -141,12 +140,6 @@ Parameters:
     AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Type: String
-  AWSPrivateSubnetDCIDR:
-    Default: 10.16.224.0/20
-    Description: Network Range of the Private AWS Subnet in AZD
-    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(1[6-9]|2[0-8]))$"
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
-    Type: String
   AWSVPCCIDR:
     Description: Virtual Private Cloud (VPC) CIDR For AWS Network
     Default: 10.16.0.0/16
@@ -170,7 +163,7 @@ Parameters:
       It cannot start or end with a hyphen (-).
     Type: String
   QSS3BucketRegion:
-    Default: 'us-east-1'
+    Default: 'ap-southeast-2'
     Description: 'The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.'
     Type: String
   QSS3KeyPrefix:
@@ -189,7 +182,7 @@ Resources:
   ONPREMVPC:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://learn-cantrill-labs.s3.amazonaws.com/aws-hybrid-activedirectory/02_HYBRIDDIR-NESTED-ONPREM-VPC.yaml
+      TemplateURL: https://aws-hybrid-activedirectory.s3-ap-southeast-2.amazonaws.com/02_HYBRIDDIR-NESTED-ONPREM-VPC.yaml
       Parameters:
         VPCCIDR: !Ref ONPREMVPCCIDR
         PublicSubnetACIDR: !Ref ONPREMPublicSubnetACIDR
@@ -199,7 +192,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: ONPREMVPC
     Properties:
-      TemplateURL: https://learn-cantrill-labs.s3.amazonaws.com/aws-hybrid-activedirectory/03_HYBRIDDIR-NESTED-ONPREM-AD.yaml
+      TemplateURL: https://aws-hybrid-activedirectory.s3-ap-southeast-2.amazonaws.com/03_HYBRIDDIR-NESTED-ONPREM-AD.yaml
       Parameters:
         ADInstanceType: !Ref ADInstanceType
         ADServer1NetBIOSName: !Ref DC1NetBIOSName
@@ -224,7 +217,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: ONPREMAD
     Properties:
-      TemplateURL: https://learn-cantrill-labs.s3.amazonaws.com/aws-hybrid-activedirectory/04_HYBRIDDIR-NESTED-ONPREM-COMPUTE.yaml
+      TemplateURL: https://aws-hybrid-activedirectory.s3-ap-southeast-2.amazonaws.com/04_HYBRIDDIR-NESTED-ONPREM-COMPUTE.yaml
       Parameters:
         PrivateSubnet1ID: !GetAtt 'ONPREMVPC.Outputs.PrivateSubnetAID'
         PrivateSubnet2ID: !GetAtt 'ONPREMVPC.Outputs.PrivateSubnetBID'
@@ -239,7 +232,7 @@ Resources:
   AWSVPC:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://learn-cantrill-labs.s3.amazonaws.com/aws-hybrid-activedirectory/05_HYBRIDDIR-NESTED-AWS-VPC.yaml  
+      TemplateURL: https://aws-hybrid-activedirectory.s3-ap-southeast-2.amazonaws.com/05_HYBRIDDIR-NESTED-AWS-VPC.yaml  
       Parameters:
         ONPREMPrivateSubnetAID: !GetAtt 'ONPREMVPC.Outputs.PrivateSubnetAID'
         ONPREMPrivateSubnetBID: !GetAtt 'ONPREMVPC.Outputs.PrivateSubnetBID'
@@ -255,6 +248,5 @@ Resources:
         PrivateSubnetACIDR: !Ref AWSPrivateSubnetACIDR
         PrivateSubnetBCIDR: !Ref AWSPrivateSubnetBCIDR
         PrivateSubnetCCIDR: !Ref AWSPrivateSubnetCCIDR
-        PrivateSubnetDCIDR: !Ref AWSPrivateSubnetDCIDR
         
   

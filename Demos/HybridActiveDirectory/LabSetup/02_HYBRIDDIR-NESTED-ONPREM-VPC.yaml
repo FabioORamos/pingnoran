@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: https://learn.cantrill.io - Advanced Demo - Hybrid Active Directory ONPREM NESTED VPC
+Description: Advanced Demo - Hybrid Active Directory ONPREM NESTED VPC from https://learn.cantrill.io adapted by Fabio Ramos
 Parameters:
   PrivateSubnetACIDR:
     Default: 192.168.10.0/24

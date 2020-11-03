@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: https://learn.cantrill.io - Advanced Demo - Hybrid Active Directory ONPREM NESTED COMPUTE
+Description: Advanced Demo - Hybrid Active Directory ONPREM NESTED COMPUTE from https://learn.cantrill.io modified by Fabio Ramos
 Parameters:
   PrivateSubnet1ID:
     Description: ID of the private subnet A in the ONPREM SIMULATED NETWORK
@@ -26,7 +26,7 @@ Parameters:
     Type: String
   DomainDNSName:
     AllowedPattern: '[a-zA-Z0-9\-]+\..+'
-    Default: ad.animals4life.org
+    Default: ad.pingnoran.com
     Description: Fully qualified domain name (FQDN) of the domain
     MaxLength: '255'
     MinLength: '2'
@@ -92,8 +92,8 @@ Resources:
           }
 
           Install-WindowsFeature -IncludeAllSubFeature RSAT
-          New-Item -Path 'C:\a4lfiles' -ItemType Directory
-          New-SmbShare -Name "a4lfiles" -Path "C:\a4lfiles" -FullAccess "Users"
+          New-Item -Path 'C:\pingofiles' -ItemType Directory
+          New-SmbShare -Name "pingofiles" -Path "C:\pingofiles" -FullAccess "Users"
           $AdDomain = "${DomainDNSName}"
           $Password = ConvertTo-SecureString '${ADAdminPassword}' -AsPlainText -Force  
           $Username = "${ADAdminUser}"

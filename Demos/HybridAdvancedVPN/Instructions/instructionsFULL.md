@@ -2,8 +2,8 @@
 
 # STAGE 1A - INITIAL SETUP OF AWS ENVIRONMENT AND SIMULATED ON-PREMISES ENVIRONMENT
 
-- Apply `ADVS2SVPN-AWS.yaml` to the `us-east-1` region in your AWS account (Call it AWS) - If prompted ... check capabilities Box
-- Apply `ADVS2SVPN-ONPREM.yaml` to the `us-east-1` region in your AWS account (Call it OMPREM) - If prompted ... check capabilities Box
+- Apply `ADVS2SVPN-AWS.yaml` to the `ap-southeast-2` region in your AWS account (Call it AWS) - If prompted ... check capabilities Box
+- Apply `ADVS2SVPN-ONPREM.yaml` to the `ap-southeast-2` region in your AWS account (Call it OMPREM) - If prompted ... check capabilities Box
 
 Wait for both stacks to move into a `CREATE_COMPLETE` status **Estimated time to complete 5-10 mins**
 

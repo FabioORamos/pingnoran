@@ -4,9 +4,9 @@ In this part of the demo you will be creating the Managed Microsoft AD within AW
 This uses the Directory Service and results in a `real` Microsoft AD delivered as a managed service  
 The DS can be used to support AWS services which needed a directory such as FSx, Workspaces, Workdocs and so on.  
 
-# STAGE 3A - Create the Directory (aws.animals4life.org)  
+# Create the Directory (aws.pingnoran.com)  
 
-move to https://console.aws.amazon.com/directoryservicev2/home?region=us-east-1#!/directories  
+Go to Directory Service
 Click `Setup A Directory`  
 Directory Type `AWS Managed Microsoft AD`  
 Click `Next`  
@@ -14,8 +14,8 @@ Click `Next`
 Populate the following values  
 
 Edition : `Standard`  
-Directory DNS Name `aws.animals4life.org`  
-Netbios `A4LAWS`   
+Directory DNS Name `aws.pingnoran.com`  
+Netbios `PingoAWS`   
 Admin password `REPLACE THIS WITH YOUR EXISTING DIRECTORY PASSWORD`  
 (the admin use of the managed directory is `Admin`)  
 Click `Next`  
@@ -30,16 +30,15 @@ Click `Create Directory`
 
 This will take some time to create 20-45 Minutes  
 
-# STAGE 3B - CREATE A JUMP BOX IN AWS... DOMAIN JOINED so we can manage the AWS Directory.  
+# Create a Jump Box in AWS with DOMAIN JOINED so we can manage the AWS Directory.  
 
-Move to https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:  
-Launch Instance  
+Launch a new EC2 Instance  
 Click `Select` next to `Microsoft Windows Server 2019 Base`  
 Select `t3.medium`  
 Click `next configure instance details`  
 Click `Network` Dropdown `AWS-VPC`  
 In `Subnet` Dropdown set to `AWS-PUBLIC`  
-Under `Domain join directory` select `aws.animals4life.org`  
+Under `Domain join directory` select `aws.pingnoran.com`  
 Under `IAM Role` select `EC2 Instance Profile`  
 Click `Next Add Storage`  
 Click `Next Add Tags`  
@@ -48,7 +47,7 @@ for `Key` type `Name`
 for `Value` type `JumpBox-AWS`  
 Click `Next: Configure Security Group`  
 Click `Select An Existing Security Group`  
-Check the SG with the description of `Default A4L AWS SG`  
+Check the SG with the description of `Default Pingnoran AWS SG`  
 Click `Review and Launch`  
 Click `Launch`  
 Choose `Existing key Pair`  
@@ -56,7 +55,7 @@ choose `A4L`
 Check the `Acknowledgement Box`  
 Click `Launch Instances`  
 
-# STAGE 3C - Connect to the Jump Box
+# Connect to the Jump Box
 
 Use the remote desktop application to connect to the Jumpbox-AWS  
 You will need :-  
@@ -66,7 +65,7 @@ You will need :-
 
 If there are any resolution settings `DONT` use fullscreen and set a resolution lower than your screen resolution (so you can see the instructions)  
 
-# STAGE 3D - Install the Admin Tools  
+# Install the Admin Tools  
 
 Click `Start` and type powershell  
 Right Click PowerShell and Run as Administrator  
@@ -74,10 +73,9 @@ Run `Install-WindowsFeature -IncludeAllSubFeature RSAT` to install domain mgmt t
 
 Restart Jumpbox-AWS  
 
-# STAGE 3E - Verify Domain Works  
+# Verify Domain Works  
 
 Open the active directory users and computers and verify you can connect to the AWS based domain  
 
-# Stage 3 - FINISH
-Once you have connected ... you can finish this part of the DEMO
+Once you have connected ... you can finish this part of the DEMO.
 

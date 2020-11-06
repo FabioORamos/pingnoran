@@ -1,7 +1,5 @@
 # Advanced Demo - Web App - Single Server to Elastic Evolution
 
-![Stage1 - PNG](https://github.com/acantril/learn-cantrill-io-labs/blob/master/aws-elastic-wordpress-evolution/02_LABINSTRUCTIONS/STAGE1%20-%20SINGLE%20SERVER%20MANUAL.png)
-
 In stage 1 of this advanced demo you will:
 - Setup the environment which WordPress will run from. 
 - Configure some SSM Parameters which the manual and automatic stages of this advanced demo series will use
@@ -9,26 +7,21 @@ In stage 1 of this advanced demo you will:
 
 This is the starting point .. the common wordpress configuration which you will evolve over the coming demo stages.
 
-# STAGE 1A - Login to an AWS Account  
-
-Login to an AWS account using a user with admin privileges and ensure your region is set to `us-east-1` `N. Virginia`
-
-Click [HERE](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://learn-cantrill-labs.s3.amazonaws.com/aws-elastic-wordpress-evolution/A4LVPC.yaml&stackName=A4LVPC) to auto configure the VPC which WordPress will run from
+## Create a stack using the yaml file  
 
 Wait for the STACK to move into the `CREATE_COMPLETE` state before continuing.
 
-# STAGE 1B - Create an EC2 Instance to run wordpress
+## Create an EC2 Instance to run wordpress
 
-Move to the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1  
 Click `Launch Instance`  
 Locate the `Amazon Linux 2 AMI (HVM), SSD Volume Type` AMI  
 ensure `64-bit (x86)` is selected  
 Click `Select`
 Select whatever instance shows as `Free tier eligible`  
 Click `Next: Configure Instance Details`  
-For `Network` select `A4LVPC`  
+For `Network` select `Pingnoran`  
 for `Subnet` select `sn-Pub-A`  
-For `IAM role` select `A4LVPC-WordpressInstanceProfile`  
+For `IAM role` select `VPC-WordpressInstanceProfile`  
 Enable `T2/T3 Unlimited`  
 _Even though it says Additional Changes may apply thats only if the rolling 24 hour average exceeds baseline, it won't_  
 Click `Next: Add Storage`  
@@ -37,7 +30,7 @@ Click `Add Tag`
 Set `Key` to `Name` & set `Value` to `Wordpress-Manual`  
 Click `Next: Configure Security Group`  
 Check `Select an existing security group`  
-Select `A4LVPC-SGWordpress` it will have randomness after it, thats ok :)  
+Select `VPC-SGWordpress` it will have randomness after it, thats ok :)  
 Click `Review and Launch`  
 Click `Continue` to the port 22 warning, thats ok  
 Click `Launch`  
@@ -48,37 +41,34 @@ Click `View Instances`
 Wait for the instance to be in a `RUNNING` state  
 _you can continue to stage 1B below while the instance is provisioning_
 
-# STAGE 1B - Create SSM Parameter Store values for wordpress
+## Create SSM Parameter Store values for wordpress
 
 Storing configuration information within the SSM Parameter store scales much better than attempting to script them in some way.
 In this sub-section you are going to create parameters to store the important configuration items for the platform you are building.  
 
-Open a new tab to https://console.aws.amazon.com/systems-manager/home?region=us-east-1  
-Click on `Parameter Store` on the menu on the left
-
-## Create Parameter - DBUser (the login for the specific wordpress DB)  
+### Create Parameter - DBUser (the login for the specific wordpress DB)  
 Click `Create Parameter`
-Set Name to `/A4L/Wordpress/DBUser`
+Set Name to `/Pingnoran/Wordpress/DBUser`
 Set Description to `Wordpress Database User`  
 Set Tier to `Standard`  
 Set Type to `String`  
 Set Data type to `text`  
-Set `Value` to `a4lwordpressuser`  
+Set `Value` to `framos`  
 Click `Create parameter`  
 
-## Create Parameter - DBName (the name of the wordpress database)  
+### Create Parameter - DBName (the name of the wordpress database)  
 Click `Create Parameter`
-Set Name to `/A4L/Wordpress/DBName`
+Set Name to `/Pingnoran/Wordpress/DBName`
 Set Description to `Wordpress Database Name`  
 Set Tier to `Standard`  
 Set Type to `String`  
 Set Data type to `text`  
-Set `Value` to `a4lwordpressdb`  
+Set `Value` to `pingnorandb`  
 Click `Create parameter` 
 
-## Create Parameter - DBEndpoint (the endpoint for the wordpress DB .. )  
+### Create Parameter - DBEndpoint (the endpoint for the wordpress DB .. )  
 Click `Create Parameter`
-Set Name to `/A4L/Wordpress/DBEndpoint`
+Set Name to `/Pingnoran/Wordpress/DBEndpoint`
 Set Description to `Wordpress Endpoint Name`  
 Set Tier to `Standard`  
 Set Type to `String`  
@@ -86,20 +76,20 @@ Set Data type to `text`
 Set `Value` to `localhost`  
 Click `Create parameter`  
 
-## Create Parameter - DBPassword (the password for the DBUser)  
+### Create Parameter - DBPassword (the password for the DBUser)  
 Click `Create Parameter`
-Set Name to `/A4L/Wordpress/DBPassword`
+Set Name to `/Pingnoran/Wordpress/DBPassword`
 Set Description to `Wordpress DB Password`  
 Set Tier to `Standard`  
 Set Type to `SecureString`  
 Set `KMS Key Source` to `My Current Account`  
 Leave `KMS Key ID` as default
-Set `Value` to your chosen database password (make sure its complex) Password1234!!
+Set `Value` to your chosen database password (make sure its complex)
 Click `Create parameter`  
 
-## Create Parameter - DBRootPassword (the password for the database root user, used for self-managed admin)  
+### Create Parameter - DBRootPassword (the password for the database root user, used for self-managed admin)  
 Click `Create Parameter`
-Set Name to `/A4L/Wordpress/DBRootPassword`
+Set Name to `/Pingnoran/Wordpress/DBRootPassword`
 Set Description to `Wordpress DBRoot Password`  
 Set Tier to `Standard`  
 Set Type to `SecureString`  
@@ -108,7 +98,7 @@ Leave `KMS Key ID` as default
 Set `Value` to your chosen database password (make sure its complex)
 Click `Create parameter`  
 
-# STAGE 1C - Connect to the instance and install a database and wordpress
+# Connect to the instance and install a database and wordpress
 
 Right click on `Wordpress-Manual` choose `Connect`
 Choose `Session Manager`  
@@ -122,19 +112,19 @@ type `clear` and press enter
 Run the commands below to bring the parameter store values into ENV variables to make the manual build easier.  
 
 ```
-DBPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
+DBPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBPassword --with-decryption --query Parameters[0].Value)
 DBPassword=`echo $DBPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBRootPassword=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
+DBRootPassword=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBRootPassword --with-decryption --query Parameters[0].Value)
 DBRootPassword=`echo $DBRootPassword | sed -e 's/^"//' -e 's/"$//'`
 
-DBUser=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBUser --query Parameters[0].Value)
+DBUser=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBUser --query Parameters[0].Value)
 DBUser=`echo $DBUser | sed -e 's/^"//' -e 's/"$//'`
 
-DBName=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBName --query Parameters[0].Value)
+DBName=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBName --query Parameters[0].Value)
 DBName=`echo $DBName | sed -e 's/^"//' -e 's/"$//'`
 
-DBEndpoint=$(aws ssm get-parameters --region us-east-1 --names /A4L/Wordpress/DBEndpoint --query Parameters[0].Value)
+DBEndpoint=$(aws ssm get-parameters --region ap-southeast-2 --names /Pingnoran/Wordpress/DBEndpoint --query Parameters[0].Value)
 DBEndpoint=`echo $DBEndpoint | sed -e 's/^"//' -e 's/"$//'`
 
 ```
@@ -215,43 +205,22 @@ sudo rm /tmp/db.setup
 
 ## Test Wordpress is installed
 
-Open the EC2 console https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name  
-Select the `Wordpress-Manual` instance  
-copy the `IPv4 Public IP` into your clipboard  
-Open that IP in a new tab  
-You should see the wordpress welcome page  
+Open the EC2 instance using the DNS name 
 
 ## Perform Initial Configuration and make a post
 
-in `Site Title` enter `Catagram`  
-in `Username` enter `admin`
-in `Password` it should suggest a strong password for the wordpress admin user, feel free to use this or choose your own - regardless, write it down somewhere safe.  
+Enter the name of your site in  `Site Title`. 
+In `Username` enter the name stored on DBUser
+In `Password` enter the name stored on DBPassword
 in `Your Email` enter your email address  
 Click `Install WordPress`
-Click `Log In`  
-In `Username or Email Address` enter `admin`  
-in `Password` enter the previously noted down strong password  
-Click `Log In`  
+Click `Log In` and enter the User and Password
 
-Click `Posts` in the menu on the left  
-Select `Hello World!` 
-Click `Bulk Actions` and select `Move to Trash`
-Click `Apply`  
-
-Click `Add New`  
-If you see any popups close them down  
-For title `The Best Animal(s)!`  
-Click the `+` under the title, select  `Gallery` 
-Click `Upload`  
-Select some animal pictures.... if you dont have any use google images to download some  
-Upload them  
-Click `Publish`  
-Click `Publish`
-Click `view Post`  
+Play around with adding pages and posts.
 
 This is your working, manually installed and configured wordpress
 
-# STAGE 1 - FINISH  
+# FINISH  
 
 This configuration has several limitations which you will resolve one by one within this lesson :-
 
@@ -262,9 +231,7 @@ This configuration has several limitations which you will resolve one by one wit
 - The application media and UI store is local to an instance, scaling IN/OUT risks this media
 - Customer Connections are to an instance directly ... no health checks/auto healing
 - The IP of the instance is hardcoded into the database ....
-- Go to https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=desc:tag:Name
-- Right click `Wordpress-Manual` , `Instance State`, `Stop`, `Yes, Stop`
-- Right click `Wordpress-Manual` , `Instance State`, `Start`, `Yes, Start`
+- Stop and Restart the EC2 instance
 - the IP address has changed ... which is bad
 - Try browsing to it ...
 - What about the images....?
@@ -273,6 +240,7 @@ This configuration has several limitations which you will resolve one by one wit
 
 You can now move onto STAGE2
 
+Bottom line = These actions are not recommended.
 
 
 

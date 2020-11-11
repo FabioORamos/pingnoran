@@ -1,13 +1,18 @@
 # Advanced Highly-Available Dynamic Site-to-Site VPN
 
-# STAGE 1A - INITIAL SETUP OF AWS ENVIRONMENT AND SIMULATED ON-PREMISES ENVIRONMENT
+# INITIAL SETUP OF AWS ENVIRONMENT AND SIMULATED ON-PREMISES ENVIRONMENT
+
+In this part we will be creating a few things:-
+
+- The initial AWS environment with 2 subnets, 2 EC2 instances, a TGW and VPC attachment and a default route pointing at the TGW.
+- The simulated on-premises environment - 1 public subnet, 2 private subnets. The public subnet has 2 Ubuntu + strongSwan + Free VPN endpoints.
 
 - Apply `ADVS2SVPN-AWS.yaml` to the `ap-southeast-2` region in your AWS account (Call it AWS) - If prompted ... check capabilities Box
 - Apply `ADVS2SVPN-ONPREM.yaml` to the `ap-southeast-2` region in your AWS account (Call it OMPREM) - If prompted ... check capabilities Box
 
 Wait for both stacks to move into a `CREATE_COMPLETE` status **Estimated time to complete 5-10 mins**
 
-# STAGE 1B - CREATE CUSTOMER GATEWAY OBJECTS 
+## CREATE CUSTOMER GATEWAY OBJECTS 
 
 Open a new tab to the VPC Console
 Open a new tab to CloudFormation Console
@@ -16,7 +21,7 @@ Click ON-PREM stack
 Click Outputs
 Note down IP for `Router1Public` and `Router2Public`
 
-In the VPC Console https://console.aws.amazon.com/vpc/home?region=us-east-1#
+In the VPC Console 
 Select `Customer Gateways` under `Virtual private Network (VPN)`
 Click `Create Customer gateway`
 Set Name to `ONPREM-ROUTER1`
@@ -25,7 +30,7 @@ Set BGP ASN to `65016`
 Set IP Address to Router1PubIP
 Click `create Customer gateway`
 
-In the VPC Console https://console.aws.amazon.com/vpc/home?region=us-east-1#
+In the VPC Console
 Select `Customer Gateways` under `Virtual private Network (VPN)`
 Click `Create Customer gateway`
 Set Name to `ONPREM-ROUTER2`
@@ -34,12 +39,17 @@ Set BGP ASN to `65016`
 Set IP Address to Router2PubIP
 Click `create Customer gateway`
 
-# STAGE 2A - CREATE VPN ATTACHMENTS FOR TRANSIT GATEWAY
+# CREATE VPN ATTACHMENTS FOR TRANSIT GATEWAY
 
-Move back to `Transit Gateway Attachments` https://console.aws.amazon.com/vpc/home?region=us-east-1#TransitGatewayAttachments:sort=transitGatewayAttachmentId
+In this Stage we will be creating two VPN attachments for the Transit GATEWAY.
+This has the effect of creating two VPN connections ... 1 for each of the customer gateways.
+Each connection has 2 Tunnels: one between AWS Endpoint A => Customer Gateway and one between AWS Endpoint B => Customer Gateway.
+Once the connections have been created, we will download the configuration files which will be required to configure the onpremises VPN endpoints (customer gateways).
+
+Move back to `Transit Gateway Attachments`
 
 Click `Create Transit Gateway Attachment`
-Click `Transit Gateway ID` dropdown and select `A4LTGW`
+Click `Transit Gateway ID` dropdown and select `PingnoranTGW`
 Select `VPN` for attachment type
 Select `Existing` for `Customer gateway`
 Click `Customer gateway ID` dropdown and select `ONPREM-ROUTER1`
@@ -48,7 +58,7 @@ Click `Enable Acceleration`
 Click `Create Attachment`
 
 Click `Create Transit Gateway Attachment`
-Click `Transit Gateway ID` dropdown and select `A4LTGW`
+Click `Transit Gateway ID` dropdown and select `PingnoranTGW`
 Select `VPN` for attachment type
 Select `Existing` for `Customer gateway`
 Click `Customer gateway ID` dropdown and select `ONPREM-ROUTER2`
@@ -56,7 +66,7 @@ Click `Dynamic` for `Routing options`
 Click `Enable Acceleration`
 Click `Create Attachment`
 
-Move to `Site-to-Site VPN Connections` under `Virtual Private Network` https://console.aws.amazon.com/vpc/home?region=us-east-1#VpnConnections:sort=VpnConnectionId
+Move to `Site-to-Site VPN Connections` under `Virtual Private Network` 
 
 For each of the connections, it will show you the `Customer Gateway Address` these match `ONPREM-ROUTER1 Public` and `ONPREM-ROUTER2 Public`
 
@@ -65,28 +75,28 @@ Click `Download Configuration`
 Change vendor to `Generic`
 Click Download
 Rename this file to `CONNECTION1CONFIG.TXT`
+
 Select the line which matches Router2PubIP
 Click `Download Configuration`
 Change vendor to `Generic`
 Click Download
 Rename this file to `CONNECTION2CONFIG.TXT`
 
-# STAGE 2B - POPULATE DEMO VALUE TEMPLATE WITH ALL CONFIG VALUES
+## POPULATE DEMO VALUE TEMPLATE WITH ALL CONFIG VALUES
 
 Populate the DemoValueTemplate, instructions are in that template.
 
 
-# STAGE 3A - CONFIGURE IPSEC TUNNELS FOR ONPREMISES-ROUTER1
+# CONFIGURE IPSEC TUNNELS FOR ONPREMISES-ROUTER1
 
-BEFORE DOING THIS STAGE
-BOTH VPN CONNECTIONS
-Wait for `State` to change from `pending` to `available` for both attachments
-~ 15 minutes
+In this stage, we will be configuring each of the on premises Ubuntu, strongSwan Routers to create IPSEC tunnels to AWS. Each Router will create 2 IPSEC tunnels, each going to a different AWS Endpoint. It is worth checking the visual PNG file which accompanies this STAGE to understand tunnel architecture.  
+
+Make sure before starting this stage that both VPN connections are in an `available` state  
+** You will need the completed DemoValueTemplate.md file for this stage **  
 
 (YOU WILL NEED THE CONNECTION1CONFIG.TXT) File you saved earlier
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `ONPREM-ROUTER1`
 Right Click => `Connect`
@@ -150,14 +160,13 @@ Replace the following placeholders with the real values in the `DemoValueTemplat
 `systemctl restart strongswan` to restart strongswan ... this should bring up the tunnels
 
 
-# STAGE 3B - CONFIGURE IPSEC TUNNELS FOR ONPREMISES-ROUTER2
+## CONFIGURE IPSEC TUNNELS FOR ONPREMISES-ROUTER2
 
 (YOU WILL NEED THE CONNECTION2CONFIG.TXT) File you saved earlier
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
-Locate and select `ONPREM-ROUTER1`
+Locate and select `ONPREM-ROUTER2`
 Right Click => `Connect`
 Select `Session Manager`
 Click `Connect`
@@ -167,7 +176,7 @@ Click `Connect`
 `nano ipsec.conf`
 
 This is is the file which configures the IPSEC Tunnel interfaces over which our VPN traffic flows.
-This configures the ones for ROUTER1 -> BOTH AWS Endpoints
+This configures the ones for ROUTER2 -> BOTH AWS Endpoints
 
 Replace the following placeholders with the real values in the `DemoValueTemplate.md` document
 
@@ -215,19 +224,23 @@ Replace the following placeholders with the real values in the `DemoValueTemplat
 `cp ipsec* /etc`
 `chmod +x /etc/ipsec-vti.sh`
 
-`systemctl restart strongswan` to restart strongswan ... this should bring up the tunnels
+`systemctl restart strongswan` to restart strongswan. This should bring up the tunnels.
 
 
-# STAGE 4A - CONFIGURE BGP ROUTING FOR ONPREMISES-ROUTER1 AND TEST
+# CONFIGURE BGP ROUTING FOR ONPREMISES-ROUTER1 AND TEST
+
+In this stage we will use the IPSEC tunnels created before and add BGP sessions over all the tunnels. These sessions will allow the ONPREM Routers to exchange routers with the Transit Gateway running in AWS. Once routes are exchanged, the connections will allow data to flow between AWS and ONPREMISES. BGP capability is added using `FRR` and that will be installed in this stage.  
+
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `ONPREM-ROUTER1`
 Right Click => `Connect`
 Select `Session Manager`
 Click `Connect`
 
+`sudo bash`
+`cd /home/ubuntu/demo_assets/`
 `chmod +x ffrouting-install.sh`
 `./ffrouting-install.sh`
 
@@ -252,7 +265,6 @@ SHOW THE ROUTES VIA THE UI
 SHOW THE ROUTES VIA `vtysh`
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `ONPREM-SERVER1`
 Right Click => `Connect`
@@ -262,7 +274,6 @@ Click `Connect`
 run `ping IP_ADDRESS_OF_EC2-A`
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `EC2-A`
 Right Click => `Connect`
@@ -271,13 +282,9 @@ Click `Connect`
 
 run `ping IP_ADDRESS_OF_ONPREM-SERVER1`
 
-
-
-
-# STAGE 4B - CONFIGURE BGP ROUTING FOR ONPREMISES-ROUTER2 AND TEST
+## CONFIGURE BGP ROUTING FOR ONPREMISES-ROUTER2 AND TEST
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `ONPREM-ROUTER2`
 Right Click => `Connect`
@@ -308,7 +315,6 @@ SHOW THE ROUTES VIA THE UI
 SHOW THE ROUTES VIA `vtysh`
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `ONPREM-SERVER2`
 Right Click => `Connect`
@@ -318,7 +324,6 @@ Click `Connect`
 run `ping IP_ADDRESS_OF_EC2-B`
 
 Move to EC2 Console
-https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:sort=instanceState
 Click `Instances` on the left menu
 Locate and select `EC2-B`
 Right Click => `Connect`
@@ -327,10 +332,10 @@ Click `Connect`
 
 run `ping IP_ADDRESS_OF_ONPREM-SERVER2`
 
-# STAGE 5 - CLEANUP
+# CLEANUP
 
 - Delete the on-premises stack
-- Delete the VPN COnnections
+- Delete the VPN Connections
 - Delete the customer Gateways
 - WAIT FOR THE CONNECTIONS TO BE REMOVED
 - Delete the ONPREM STACK

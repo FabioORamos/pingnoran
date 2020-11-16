@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template implements an IAM user 'Peter'
+  And permissions appropriate for Peter.
+Parameters:
+  peterpassword:
+    NoEcho: true
+    Description: IAM User Peter Password
+    Type: String
+    MinLength: 4
+    MaxLength: 30
+    AllowedPattern: ^[A-Za-z][A-Za-z0-9!@#$%^&*]*$
+Resources:
+  peter:
+    Type: AWS::IAM::User
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - !Ref policy
+      LoginProfile:
+        Password: !Ref peterpassword
+        PasswordResetRequired: "false"
+  policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Allow access to all S3 buckets and RoleAssume
+      ManagedPolicyName: S3AndRoleAssume
+      PolicyDocument: 
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 's3:*'
+            Resource: '*' 
+          - Effect: Allow
+            Action: 'sts:AssumeRole'
+            Resource: '*'

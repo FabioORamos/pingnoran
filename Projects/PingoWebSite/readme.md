@@ -1,7 +1,5 @@
 In this project I've tried to use as much AWS as possible.
 
-As you can see, I'm not really a Front End developer, but the Back End structure is sound! :)
-
 In this site, I've used:
 
 - Route 53 to route traffic from www.pingnoran.com to an Application Load Balancer. The domain is hosted on AWS.

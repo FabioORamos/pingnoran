@@ -5,9 +5,9 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Default: "Pingnoran"
   WindowsAMI:
-    Description: AMI for Windows Server - Windows_Server-2019-English-Full-Base-2020.07.15
+    Description: AMI for Windows Server - Windows_Server-2019-English-Full-Base-2020.11.11
     Type: String
-    Default: "ami-09a17b63e7283d6a2"
+    Default: "ami-0f783075765a8d1c5"
   UbuntuAMI:
     Description: AMI for Ubuntu - ubuntu-bionic-18.04-amd64-server-20200716
     Type: String

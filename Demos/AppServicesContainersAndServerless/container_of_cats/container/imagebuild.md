@@ -17,15 +17,16 @@ sudo usermod -a -G docker ssm-user //allows ssm manager to interact with Docker
 ## Use Git to get the lesson files
 
 sudo yum install git
-git clone https://github.com/acantril/aws-sa-pro.git
+git clone https://github.com/FabioORamos/pingnoran.git
 
 ## Build the docker image
 
-cd aws-sa-pro/11-AppServicesContainersAndServerless/container_of_cats/container
+cd pingnoran/Demos/AppServicesContainersAndServerless/container_of_cats/container
 docker build -t containerofcats .
 docker images --filter reference=containerofcats
 
 ## Test the image by running a container
+
 docker run -t -i -p 80:80 containerofcats
 
 ## Upload image to docker hub

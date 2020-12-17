@@ -188,3 +188,43 @@ VPC, Site-to-site VPN, Direct Connect Gateway
 Use Edge locations
 Acceleration can be enabled when creating a TGW VPN attachment
 Not compatible with VPNs unsing a VGW
+
+# Network: Layer 4 - Transport Layer
+
+Both uses IP as transfer
+
+## UDP  User Datagram Protocol
+* Faster
+* Less Reliable
+* Less overhead compared to TCP
+* All about performance
+
+## TCP - Transmission Control Protocol
+* Reliability 
+* Error Correction
+* Order of data
+* Most common
+
+TCP segments are encapsulated within IP packets
+Segments don't have SRC and DST IPs
+
+TCP segments have:
+* Source Port
+* Destination Port
+* Sequence Number
+* Acknowledgment - how each side indicates they have received the package
+* Flags - establish connections, send data and terminate connections.
+    * URG: urgent pointer. When this bit is set, the data should be treated as priority over other data.
+    * ACK: used for the acknowledgment.
+    * PSH: this is the push function. This tells an application that the data should be transmitted immediately and that we don’t want to wait to fill the entire TCP segment.
+    * RST: this resets the connection, when you receive this you have to terminate the connection right away. This is only used when there are unrecoverable errors and it’s not a normal way to finish the TCP connection.
+    * SYN: we use this for the initial three way handshake and it’s used to set the initial sequence number.
+    * FIN: this finish bit is used to end the TCP connection. TCP is full duplex so both parties will have to use the FIN bit to end the connection. This is the normal method how we end an connection.
+* Window
+* Checksum
+* Urgent Pointer 
+* Options
+* Padding
+* Data
+
+All of those items, except the Data are part of the TCP Header
